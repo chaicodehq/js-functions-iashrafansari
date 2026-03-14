@@ -25,7 +25,7 @@
  *     Returns: { name, area, total, completed, pending, successRate }
  *     successRate = completed/total as percentage string "85.00%" (toFixed(2) + "%")
  *     Agar total is 0, successRate = "0.00%"
- *
+ *z
  *   - reset()
  *     Clears all deliveries, resets id counter to 0. Returns true.
  *
@@ -50,4 +50,71 @@
  */
 export function createDabbawala(name, area) {
   // Your code here
+
+  let deliveries = [];
+  let nextId = 1;
+
+  function addDelivery(from, to){
+    if(!from || !to) return -1;
+
+    const delivery = {
+      id: nextId++,
+      from,
+      to,
+      status: "pending"
+    }
+
+    deliveries.push(delivery);
+    return delivery.id;
+  }
+
+  function completeDelivery(id){
+    const found = deliveries.find(d => d.id === id);
+
+    if(!found || found.status === "completed") return false;
+
+    found.status = "completed";
+    return true;
+  }
+
+  function getActiveDeliveries(){
+    return deliveries
+    .filter(p => p.status === "pending")
+    .map(p => ({...p}))
+  }
+
+  function getStats(){
+    const total = deliveries.length;
+    const completed = deliveries.filter(d => d.status === "completed").length;
+    const pending = total - completed;
+
+    const successRate = 
+    total === 0 ? "0.00%" : ((completed/total) * 100).toFixed(2) + "%";
+
+    return {
+      name,
+      area,
+      total,
+      completed,
+      pending,
+      successRate
+    }
+
+  }
+
+  function reset(){
+    deliveries = [];
+    nextId = 1
+    return true
+  }
+
+  return {
+    addDelivery,
+    completeDelivery,
+    getActiveDeliveries,
+    getStats,
+    reset,
+  };
+
+
 }

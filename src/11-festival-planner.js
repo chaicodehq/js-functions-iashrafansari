@@ -50,4 +50,79 @@
  */
 export function createFestivalManager() {
   // Your code here
+   let festivals = [];
+
+  const validTypes = ["religious", "national", "cultural"];
+
+  function isValidDateStr(d) {
+    return typeof d === "string" && !isNaN(new Date(d).getTime());
+  }
+
+  return {
+
+    addFestival(name, date, type) {
+
+      if (
+        !name ||
+        typeof name !== "string" ||
+        !isValidDateStr(date) ||
+        !validTypes.includes(type)
+      ) {
+        return -1;
+      }
+
+      // duplicate name check
+      if (festivals.some(f => f.name === name)) {
+        return -1;
+      }
+
+      festivals.push({ name, date, type });
+
+      return festivals.length;
+    },
+
+
+    removeFestival(name) {
+
+      const index = festivals.findIndex(f => f.name === name);
+
+      if (index === -1) return false;
+
+      festivals.splice(index, 1);
+
+      return true;
+    },
+
+
+    getAll() {
+      // ⭐ return COPY
+      return festivals.map(f => ({ ...f }));
+    },
+
+
+    getByType(type) {
+      return festivals
+        .filter(f => f.type === type)
+        .map(f => ({ ...f }));
+    },
+
+
+    getUpcoming(currentDate, n = 3) {
+
+      if (!isValidDateStr(currentDate)) return [];
+
+      return festivals
+        .filter(f => f.date >= currentDate)
+        .slice()                       // copy before sort
+        .sort((a, b) => a.date.localeCompare(b.date))
+        .slice(0, n)
+        .map(f => ({ ...f }));
+    },
+
+
+    getCount() {
+      return festivals.length;
+    }
+
+  };
 }

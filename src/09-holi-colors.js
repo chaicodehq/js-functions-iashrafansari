@@ -55,20 +55,99 @@
  */
 export function mixColors(color1, color2) {
   // Your code here
+
+  if(typeof color1 !== "object" || typeof color2 !== "object" || color1 === null || color2 === null) return null;
+
+  const r = Math.ceil((color1.r + color2.r)/2);
+  const g = Math.ceil((color1.g + color2.g)/2);
+  const b = Math.ceil((color1.b + color2.b)/2);
+
+
+  return {
+    name: `${color1.name}-${color2.name}`,
+    r,
+    g,
+    b,
+  }
+
 }
 
 export function adjustBrightness(color, factor) {
   // Your code here
+
+  // color = { name: "red", r: 255, g: 0, b: 0 }
+  // color = {r:100,g:100,b:100}
+
+  if(typeof color !== "object" || color === null || typeof factor !== "number") return null;
+
+  if(factor === 0 ) return {
+    name: `${color.name}`,
+    r: 0,
+    g: 0,
+    b: 0,
+  }
+
+  const r = Math.min(Math.ceil(color.r * factor), 255);
+  const g = Math.min(Math.ceil(color.g * factor), 255);
+  const b = Math.min(Math.ceil(color.b * factor), 255);
+
+  return {
+    name: `${color.name}`,
+    r,
+    g,
+    b,
+  }
+
 }
 
 export function addToPalette(palette, color) {
   // Your code here
+  if(!Array.isArray(palette)) return [color];
+
+  if(color === null || !color) return [...palette];
+
+  const newPalette = [...palette, color];
+
+  return newPalette
 }
 
 export function removeFromPalette(palette, colorName) {
   // Your code here
+  if(!Array.isArray(palette)) return [];
+
+  return palette.filter(color => color.name !== colorName)
 }
 
 export function mergePalettes(palette1, palette2) {
   // Your code here
+
+  if(!Array.isArray(palette1) && !Array.isArray(palette2)) return [];
+
+  if(!Array.isArray(palette1)) {
+    palette1 = [];
+  }
+
+  if(!Array.isArray(palette2)) {
+    palette2 = [];
+  }
+
+  // palette1 = [{name: "red"}]
+  // palette2 = [{name: "green"}]
+
+  const merged = [...palette1, ...palette2];
+
+  const unique = [];
+  const seen = new Set();
+
+  for (const color of merged){
+    if (color && !seen.has(color.name)){
+      seen.add(color.name);
+      unique.push(color)
+    }
+  }
+
+  
+
+  return unique;
+
 }

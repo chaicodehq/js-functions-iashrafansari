@@ -54,28 +54,83 @@
  */
 export function pipe(...fns) {
   // Your code here
+  const valid = fns.filter(fn => typeof fn === "function");
+
+  if (valid.length === 0) return x => x;
+
+  return (...args) =>
+    valid.slice(1).reduce(
+      (acc, fn) => fn(acc),
+      valid[0](...args)
+    );
+
 }
 
 export function compose(...fns) {
   // Your code here
+  const valid = fns.filter(fn => typeof fn === "function");
+
+  if (valid.length === 0) return x => x;
+
+  return (...args) =>
+    valid.slice(0, -1).reduceRight(
+      (acc, fn) => fn(acc),
+      valid[valid.length - 1](...args)
+    );
 }
 
 export function grind(spice) {
   // Your code here
+   if (!spice || typeof spice !== "object") return spice;
+
+  return { ...spice, form: "powder" };
 }
 
 export function roast(spice) {
   // Your code here
+   if (!spice || typeof spice !== "object") return spice;
+
+  return { ...spice, roasted: true, aroma: "strong" };
 }
 
 export function mix(spice) {
   // Your code here
+ if (!spice || typeof spice !== "object") return spice;
+
+  return { ...spice, mixed: true };
+
 }
 
 export function pack(spice) {
   // Your code here
+   if (!spice || typeof spice !== "object") return spice;
+
+  return {
+    ...spice,
+    packed: true,
+    label: `${spice.name} Masala`
+  };
 }
 
 export function createRecipe(steps) {
   // Your code here
+
+  if (!Array.isArray(steps) || steps.length === 0) {
+    return x => x;
+  }
+
+  const map = {
+    grind,
+    roast,
+    mix,
+    pack
+  };
+
+  const fns = steps
+    .map(step => map[step])
+    .filter(fn => typeof fn === "function");
+
+  if (fns.length === 0) return x => x;
+
+  return pipe(...fns);
 }
